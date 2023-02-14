@@ -9,6 +9,8 @@ public class Pokemon {
     private Map<Integer, List<String>> pokemonList;
     private List playerPokemon;
     private String playerPokemonName;
+    private List computerPokemon;
+    private String computerPokemonName;
 
     // Ich werfe hier keine Exception, sondern die Klasse `XSSFWorkbook` hat ein Exception Handling.
     // D.h. bereits "eingebauten" Java-Code muss ich nicht testen. Ich muss nur testen, was ich selbst schreibe.
@@ -87,45 +89,51 @@ public class Pokemon {
         return pokemon;
     }
 
+    // TODO Continue here
+    public List<String> computerChoosesPokemon() {
+
+    }
+
     public int getIndexFromPlayer() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Choose your Pokemon by index (from 1 to 153). See list in src/main/resources/PokedexAttacks.xlsx for Pokemon names and indices.");
         return scanner.nextInt();
     }
 
-    public List<String> choosePokemonByName(String pokemonName) {
+    public List<String> choosePokemonByName(String pokemonName) throws IOException {
         // The last two lines in pokemonList are empty, so I don't iterate through them.
         for (int i = 1; i < pokemonList.size() - 2; i++) {
             if (pokemonList.get(i).get(29).equals(pokemonName)) {
                 printPlayerPokemonName(pokemonName);
-                //                System.out.println("You chose " + pokemonName + ".");
                 playerPokemonName = pokemonName;
-                return pokemonList.get(i);
+                playerPokemon = pokemonList.get(i);
+                printPokemonASCII();
+                return playerPokemon;
             }
         }
 
-        // If pokemonName not in pokemonList:
-        throw new IllegalArgumentException("The name you entered was not found in the list of pokemons.");
+        // Case: pokemon name does not exist
+        throw new IllegalArgumentException("This pokemon does not exist.");
     }
 
-    public List<String> choosePokemonByName() {
+    public List<String> choosePokemonByName() throws IOException {
         String pokemonName = getPokemonNameFromPlayer();
         // Search pokemonList for name
-        /*
-        For each entry in pokemonList:
-            if entry at j = 29 === pokemonName
-                return entry
-         */
-        for (Map.Entry<Integer, List<String>> entry : pokemonList.entrySet()) {
-            if (entry.getValue().get(29).equals(pokemonName)) {
+
+        // Case: pokemon name found
+        // The last two lines in pokemonList are empty, so I don't iterate through them.
+        for (int i = 1; i < pokemonList.size() - 2; i++) {
+            if (pokemonList.get(i).get(29).equals(pokemonName)) {
                 printPlayerPokemonName(pokemonName);
                 playerPokemonName = pokemonName;
-                return entry.getValue();
+                playerPokemon = pokemonList.get(i);
+                printPokemonASCII();
+                return playerPokemon;
             }
         }
 
-        // If pokemonName not in pokemonList:
-        throw new IllegalArgumentException("The name you entered was not found in the list of pokemons.");
+        // Case: pokemon name does not exist
+        throw new IllegalArgumentException("This pokemon does not exist.");
     }
 
     public void printPlayerPokemonName(String pokemonName) {
@@ -192,6 +200,14 @@ public class Pokemon {
 
     public List getPlayerPokemon() {
         return playerPokemon;
+    }
+
+    public List getComputerPokemon() {
+        return computerPokemon;
+    }
+
+    public String getComputerPokemonName() {
+        return computerPokemonName;
     }
 
 }
