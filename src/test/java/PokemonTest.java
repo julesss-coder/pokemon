@@ -76,6 +76,25 @@ public class PokemonTest {
 
     // let player choose whether to choose pokemon by index or by name
 
+    /*
+    // Computer chooses pokemon
+    // It is not necessary to let computer choose by name. Choose by number instead.
+    computerChoice = Create random integer between 1 and 152
+    Get pokemon entry (the whole List) at pokemonList[computerChoice]
+    Get name in entry
+    Assign entry to computerPokemon
+    assign name to computerPokemonEntry
+    print name and ASCII art
+     */
+    // TODO Continue here
+    @Test
+    void computerChoosesRandomPokemonByIndex() throws IOException {
+        Pokemon pokemonGame = new Pokemon();
+        pokemonGame.readPokemonsFromFile();
+        // pokemonGame.computerPokemon === pokemon chose by computer
+        assertEquals(pokemonGame.getComputerPokemon(), pokemonGame.choosePokemonByIndex(1));
+        assertEquals(pokemonGame.getComputerPokemonName(), pokemonGame.choosePokemonByIndex(1).get(29));
+    }
 
 
 }
