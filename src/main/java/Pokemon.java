@@ -10,9 +10,6 @@ public class Pokemon {
     private List playerPokemon;
     private String playerPokemonName;
 
-
-
-
     // Ich werfe hier keine Exception, sondern die Klasse `XSSFWorkbook` hat ein Exception Handling.
     // D.h. bereits "eingebauten" Java-Code muss ich nicht testen. Ich muss nur testen, was ich selbst schreibe.
     // Warum kann ich keine HashMap returnen, sondern nur eine Map?
