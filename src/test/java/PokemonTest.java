@@ -50,23 +50,31 @@ public class PokemonTest {
     }
 
 
-    // user can choose pokemon by name
-    // user chooses "Bulbasaur"
-        // find the line in pokemon list where index 29 === "Bulbasaur"
-        // assign this line to pokemonList
-    // i.e. playerPokemon = chosen pokemon
+    // FIXME deal with empty list || always assign a value to list on game start
     @Test
-    void userCanChoosePokemonByName() {
+    void userCanChoosePokemonByName() throws IOException {
         Pokemon pokemonGame = new Pokemon();
-//        pokemonGame.choosePokemonByName("BulbaSaur")
-
+        // the name in the ith entry in pokemonList === return value of choosePokemonByName(Bulbasaur)
+        // i = 1 (index of pokemonList entry for Bulbasaur), 29 = index of name
+        assertEquals(pokemonGame.getPokemonList().get(1), pokemonGame.choosePokemonByName("Bulbasaur"));
+        assertEquals(pokemonGame.getPokemonList().get(14), pokemonGame.choosePokemonByName("Kakuna"));
     }
 
     @Test
-    void invalidUserInputForPokemonNameThrowsIllegalArgumentException() {}
+    void invalidUserInputForPokemonNameThrowsIllegalArgumentException() throws IOException {
+        Pokemon pokemonGame = new Pokemon();
+        pokemonGame.readPokemonsFromFile();
+        assertThrows(IllegalArgumentException.class, () -> pokemonGame.choosePokemonByName("Invalid entry"));
+    }
 
-    // player's pokemon name is printed to console
-    // player's pokemon ASCII art representation is printed to console
+    // TODO Do I need to test `printPLayerPokemonName()`? "player's pokemon name is printed to console".
+
+    // FIXME How do I test this?: Player's pokemon ASCII art representation is printed to console
+
+
+    // play a round
+
+    // let player choose whether to choose pokemon by index or by name
 
 
 
