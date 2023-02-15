@@ -3,10 +3,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.util.*;
+// Library of pokemons
+public class Pokedex {
 
-public class Pokemon {
-
-    private Map<Integer, List<String>> pokemonList;
+    private Map<Integer, List<String>> pokedex;
     private List playerPokemon;
     private String playerPokemonName;
     private List computerPokemon;
@@ -15,11 +15,12 @@ public class Pokemon {
     // Ich werfe hier keine Exception, sondern die Klasse `XSSFWorkbook` hat ein Exception Handling.
     // D.h. bereits "eingebauten" Java-Code muss ich nicht testen. Ich muss nur testen, was ich selbst schreibe.
     // Warum kann ich keine HashMap returnen, sondern nur eine Map?
-
+// FIXME Some entries have blank cells, which are not added to array. => Indexes in code (29 for Pokemon name) do not match.
+    // FIXME Option: Only import relevant columns
+    // FIXME Option: Import as csv instead
     public Map<Integer, List<String>> readPokemonsFromFile() throws IOException {
         FileInputStream file = new FileInputStream(new File("src/main/resources/PokedexAttacks.xlsx"));
         Workbook workbook = new XSSFWorkbook(file);
-
         Sheet sheet = workbook.getSheetAt(0);
 
         Map<Integer, List<String>> data = new HashMap<>();
@@ -46,7 +47,7 @@ public class Pokemon {
                     case FORMULA:
                         data.get(i).add(cell.getCellFormula() + "");
                         break;
-                        // Replaced `new Integer(i)` (deprecated) with `Integer.valueOf(i)` (Source: https://stackoverflow.com/questions/47095474/the-constructors-integerint-doubledouble-longlong-and-so-on-are-deprecat)
+                    // Replaced `new Integer(i)` (deprecated) with `Integer.valueOf(i)` (Source: https://stackoverflow.com/questions/47095474/the-constructors-integerint-doubledouble-longlong-and-so-on-are-deprecat)
                     default: data.get(Integer.valueOf(i)).add(" ");
                 }
             }
@@ -54,25 +55,65 @@ public class Pokemon {
         }
         System.out.println(data.size());
         System.out.println(data);
-        pokemonList = data;
+        pokedex = data;
         return data;
     }
 
-    public String choosePokemonByIndex(int index) {
+//    public void readPokemonsFromFileExperiment() throws IOException {
+        // Experiment 1: Use scanner
+//        List<String> pokemonEntries = new ArrayList<>();
+//        Scanner sc = new Scanner(new File("src/main/resources/PokedexAttacks CSV.csv"));
+//        //parsing a CSV file into the constructor of Scanner class
+//        sc.useDelimiter(",");
+//        //setting comma as delimiter pattern
+//        while (sc.hasNext()) {
+//            pokemonEntries.add(sc.next());
+////            System.out.print(sc.next());
+//        }
+//        sc.close();
+//
+//        System.out.println(pokemonEntries.toString());
+//        //closes the scanner
+
+//        BufferedReader reader = new BufferedReader(
+//                new FileReader("src/main/resources/PokedexAttacks CSV.csv")
+//        );
+//        String currentLine = reader.readLine();
+//        currentLine = reader.readLine();
+//        while (currentLine != null) {
+//            currentLine.split(","); // => in Liste geben, auf die gewollten Eiegnschaften zugreifen und dem new Pokemon() zuweisen.
+//            System.out.println(currentLine);
+//            currentLine = reader.readLine();
+//            // ====== new pokemon ==========
+//            // OOP: eine Zeile in der Excel Tabelle ist eine Entity. Wenn ich eine Entity habe, kann ich dafuer eine Klasse erzeugen.
+//            // HIER: fuer jede Zeile new Pokemon() => zu HashMap hinzufuegen (ID: new Pokemon())
+//                // Ich muss nicht alle EIgenschaften des Pokemon
+//            // Jetzt wichtig: Erst sicherstellen, dass code funktioniert. Tests kommen spaeter. Werden laut Mike in der realen Welt nie zu 100% durchgezogen.
+//            //add to hashmap
+//        }
+//        reader.close();
+//
+//
+//    }
+
+
+
+    public List<String> choosePokemonByIndex(int index) throws IOException {
         if (index <= 0) {
             throw new IllegalArgumentException("The index must be > 0.");
         }
 
-        String pokemon = pokemonList.get(index).get(29);
+        String pokemon = pokedex.get(index).get(29);
         printPlayerPokemonName(pokemon);
 //        System.out.println("You chose " + pokemon + ".");
         // TODO Put in separate method?
-        playerPokemon = pokemonList.get(index);
+        playerPokemon = pokedex.get(index);
         playerPokemonName = pokemon;
-        return pokemon;
+        printPokemonASCII(playerPokemon);
+        return playerPokemon;
     }
 
-    public String choosePokemonByIndex() {
+    public List<String> choosePokemonByIndex() throws IOException {
         int index = getIndexFromPlayer();
         // Write second method where user has to enter index
 
@@ -80,18 +121,42 @@ public class Pokemon {
             throw new IllegalArgumentException("The index must be > 0.");
         }
 
-        String pokemon = pokemonList.get(index).get(29);
+        String pokemon = pokedex.get(index).get(29);
         printPlayerPokemonName(pokemon);
 //        System.out.println("You chose " + pokemon + ".");
         // TODO Put in separate method?
-        playerPokemon = pokemonList.get(index);
+        playerPokemon = pokedex.get(index);
         playerPokemonName = pokemon;
-        return pokemon;
+        printPokemonASCII(playerPokemon);
+        return playerPokemon;
     }
 
-    // TODO Continue here
-    public List<String> computerChoosesPokemon() {
+    // computer chooses
+    // This method is only for testing. I pass in an index, as I cannot test `haveComputerChoosePokemonByIndex()` as it works with a random index.
+    public List<String> haveComputerChoosePokemonByIndex(int index) throws IOException {
+        if (index == 0) {
+            index = generateRandomIndex();
+        }
 
+        computerPokemon = pokedex.get(index);
+        computerPokemonName = choosePokemonByIndex(index).get(29);
+        System.out.println("The computer chose " + computerPokemonName + ".");
+        printPokemonASCII(computerPokemon);
+        return computerPokemon;
+    }
+
+    public List haveComputerChoosePokemonByIndex() throws IOException {
+        int index = generateRandomIndex();
+        computerPokemon = pokedex.get(index);
+        computerPokemonName = choosePokemonByIndex(index).get(29);
+        System.out.println("The computer chose " + computerPokemonName + ".");
+        printPokemonASCII(computerPokemon);
+        return computerPokemon;
+    }
+
+    private int generateRandomIndex() {
+        int index = (int) ((Math.random() * (153 - 1)) + 1);
+        return index;
     }
 
     public int getIndexFromPlayer() {
@@ -102,12 +167,12 @@ public class Pokemon {
 
     public List<String> choosePokemonByName(String pokemonName) throws IOException {
         // The last two lines in pokemonList are empty, so I don't iterate through them.
-        for (int i = 1; i < pokemonList.size() - 2; i++) {
-            if (pokemonList.get(i).get(29).equals(pokemonName)) {
+        for (int i = 1; i < pokedex.size() - 2; i++) {
+            if (pokedex.get(i).get(29).equals(pokemonName)) {
                 printPlayerPokemonName(pokemonName);
                 playerPokemonName = pokemonName;
-                playerPokemon = pokemonList.get(i);
-                printPokemonASCII();
+                playerPokemon = pokedex.get(i);
+                printPokemonASCII(playerPokemon);
                 return playerPokemon;
             }
         }
@@ -122,12 +187,12 @@ public class Pokemon {
 
         // Case: pokemon name found
         // The last two lines in pokemonList are empty, so I don't iterate through them.
-        for (int i = 1; i < pokemonList.size() - 2; i++) {
-            if (pokemonList.get(i).get(29).equals(pokemonName)) {
+        for (int i = 1; i < pokedex.size() - 2; i++) {
+            if (pokedex.get(i).get(29).equals(pokemonName)) {
                 printPlayerPokemonName(pokemonName);
                 playerPokemonName = pokemonName;
-                playerPokemon = pokemonList.get(i);
-                printPokemonASCII();
+                playerPokemon = pokedex.get(i);
+                printPokemonASCII(playerPokemon);
                 return playerPokemon;
             }
         }
@@ -147,8 +212,8 @@ public class Pokemon {
         return scanner.nextLine(); // Does this work? Should I use `next()` instead?
     }
 
-    public void printPokemonASCII() throws IOException {
-        String pokemonASCCIFile = generateASCII_ArtString();
+    public void printPokemonASCII(List<String> pokemonEntry) throws IOException {
+        String pokemonASCCIFile = generateASCII_ArtString(pokemonEntry);
 
         BufferedReader in;
         try {
@@ -172,12 +237,14 @@ public class Pokemon {
         }
     }
 
-    public String generateASCII_ArtString() {
+    public String generateASCII_ArtString(List<String> pokemonEntry) {
         String pokemonASCCIFile = "src/main/resources/Pokedex -ASCII-art/";
 
+        // Take either playerPokemon or computerPokemon
+        // Get pokedexId (index 31)
         // The last two lines in pokemonList are empty, so I don't iterate through them.
-        for (int i = 1; i < pokemonList.size() - 2; i++) {
-            List<String> entry = pokemonList.get(i);
+        for (int i = 1; i < pokedex.size() - 2; i++) {
+            List<String> entry = pokedex.get(i);
             if (entry.get(29).equals(playerPokemonName)) {
                 int pokedexID = (int) Double.parseDouble(entry.get(31));
                 if (pokedexID < 10) {
@@ -194,8 +261,8 @@ public class Pokemon {
     }
 
     // Getter methods
-    public Map<Integer, List<String>> getPokemonList() {
-        return pokemonList;
+    public Map<Integer, List<String>> getPokedex() {
+        return pokedex;
     }
 
     public List getPlayerPokemon() {
