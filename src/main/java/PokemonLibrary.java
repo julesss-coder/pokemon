@@ -1,5 +1,3 @@
-package org.example;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,15 +8,9 @@ public class PokemonLibrary {
     // Key: pokemonId, value: new Pokemon()
     Map<Integer, Pokemon> pokedexMap = new HashMap<>();
     private int pokemonId = 1;
-
-    // No constructor needed, as no arguments passed in
-
+    
     public void addPokemon(Pokemon pokemon) {
         pokedexMap.put(pokemonId, pokemon);
         pokemonId++;
     }
-
-
-
-
 }
