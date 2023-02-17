@@ -8,9 +8,14 @@ public class PokemonLibrary {
     // Key: pokemonId, value: new Pokemon()
     Map<Integer, Pokemon> pokedexMap = new HashMap<>();
     private int pokemonId = 1;
-    
+
     public void addPokemon(Pokemon pokemon) {
         pokedexMap.put(pokemonId, pokemon);
         pokemonId++;
+    }
+
+    // Getter
+    public int getPokemonId() {
+        return pokemonId;
     }
 }
