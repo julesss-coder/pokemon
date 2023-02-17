@@ -1,4 +1,4 @@
-package org.example;
+
 
 import java.io.*;
 import java.util.Arrays;
@@ -39,14 +39,14 @@ public class PokemonGame {
         } else {
             playerPokemon = choosePokemonByName(pokemon);
         }
-        System.out.println("You chose " + playerPokemon.name + ".");
-        printPlayerPokemonNameAndASCII(playerPokemon.pokemonId);
+        System.out.println("You chose " + playerPokemon.getName() + ".");
+        printPlayerPokemonNameAndASCII(playerPokemon.getPokemonId());
     }
 
     public void computerChoosesPokemon() throws IOException {
         int pokemonIndex = (int) ((Math.random() * (153 - 1)) + 1);
         computerPokemon = choosePokemonByIndex(pokemonIndex);
-        System.out.println("The computer chose " + computerPokemon.name + ".");
+        System.out.println("The computer chose " + computerPokemon.getName() + ".");
         printPlayerPokemonNameAndASCII(pokemonIndex);
     }
 
@@ -55,9 +55,9 @@ public class PokemonGame {
     }
 
     public Pokemon choosePokemonByName(String pokemonName) {
-        // FIXME Downloaded ASCII art only includes the first 96 pokemons. The website it is taken from has the first 134, to be downloaded individually after the 96th pokemon.
+        // TODO Downloaded ASCII art only includes the first 96 pokemons. The website it is taken from has the first 134, to be downloaded individually after the 96th pokemon.
         for (Map.Entry<Integer, Pokemon> pokemon : pokedex.pokedexMap.entrySet()) {
-            if (pokemon.getValue().name.equals(pokemonName)) {
+            if (pokemon.getValue().getName().equals(pokemonName)) {
                 int pokemonId = pokemon.getKey();
                 return pokedex.pokedexMap.get(pokemonId);
             }
@@ -75,6 +75,7 @@ public class PokemonGame {
             in = new BufferedReader(new FileReader(pokemonASCCIFile));
             String line = in.readLine();
             while(line != null) {
+                System.out.println(line);
                 line = in.readLine();
             }
             in.close();
@@ -82,6 +83,7 @@ public class PokemonGame {
             in = new BufferedReader(new FileReader("src/main/resources/PokemonASCIIArt/pokemon_fallback_ASCIIArt.txt"));
             String line = in.readLine();
             while(line != null) {
+                System.out.println(line);
                 line = in.readLine();
             }
             in.close();
@@ -104,16 +106,20 @@ public class PokemonGame {
     }
 
     public void printPokemonStats() {
-        System.out.println("Player's pokemon: " + playerPokemon.name + ", current HP/initial HP: " + playerPokemon.hpCurrent + "/" + playerPokemon.hpInitial);
-        System.out.println("Computer's pokemon: " + computerPokemon.name + ", current HP/initial HP: " + computerPokemon.hpCurrent + "/" + computerPokemon.hpInitial);
+        System.out.println("Player's pokemon: " + playerPokemon.getName() + ", current HP/initial HP: " + playerPokemon.getHpCurrent() + "/" + playerPokemon.getHpInitial());
+        System.out.println("Computer's pokemon: " + computerPokemon.getName() + ", current HP/initial HP: " + computerPokemon.getHpCurrent() + "/" + computerPokemon.getHpInitial());
     }
 
-    // FIXME Printing pokemon values does not work. Prints hash code instead.
     public void printAllPokemons() {
         System.out.println("All pokemons:");
-        for (Map.Entry<Integer, Pokemon> pokemon:
-             pokedex.pokedexMap.entrySet()) {
+
+        for (Map.Entry<Integer, Pokemon> pokemon: pokedex.pokedexMap.entrySet()) {
             System.out.println(pokemon.getValue().toString());
+            Pokemon entry = pokemon.getValue();
+            // cannot access attribute as they are private
+            // for each attribute in entry
+                // print attribute
+
         }
     }
 
@@ -121,10 +127,14 @@ public class PokemonGame {
         int attackPoints = generateAttackPoints();
 
         if (currentPlayer.equals("player")) {
-            computerPokemon.hpCurrent -= attackPoints;
+            computerPokemon.setHpCurrent(computerPokemon.getHpCurrent() - attackPoints);
+            System.out.println(playerPokemon.getName() + " deals " + attackPoints + " damage.");
+            System.out.println("Your current HP points: " + playerPokemon.getHpCurrent() + ". Computer's current HP points: " + computerPokemon.getHpCurrent());
             changeCurrentPlayer();
         } else if (currentPlayer.equals("computer")) {
-            playerPokemon.hpCurrent -= attackPoints;
+            playerPokemon.setHpCurrent(playerPokemon.getHpCurrent() - attackPoints);
+            System.out.println(computerPokemon.getName() + " deals " + attackPoints + " damage.");
+            System.out.println("Your current HP points: " + playerPokemon.getHpCurrent() + ". Computer's current HP points: " + computerPokemon.getHpCurrent());
             changeCurrentPlayer();
         }
     }
@@ -143,28 +153,28 @@ public class PokemonGame {
     }
 
     public String compareCurrentHP() {
-        if ((playerPokemon.hpCurrent <= 0)
-            && (playerPokemon.hpCurrent < computerPokemon.hpCurrent)) {
-            System.out.println("You won the game!");
-            winner = "player";
-        } else if ((computerPokemon.hpCurrent <= 0)
-                && (computerPokemon.hpCurrent < playerPokemon.hpCurrent)) {
+        if ((playerPokemon.getHpCurrent() <= 0)
+            && (playerPokemon.getHpCurrent() < computerPokemon.getHpCurrent())) {
             System.out.println("The computer won!");
             winner = "computer";
+            System.exit(0);
+        } else if ((computerPokemon.getHpCurrent() <= 0)
+                && (computerPokemon.getHpCurrent() < playerPokemon.getHpCurrent())) {
+            System.out.println("You won the game!");
+            winner = "player";
         }
         return winner;
     }
 
     public void startGame() throws IOException {
+        System.out.println("NEW ROUND...\n");
+        readPokemonFile();
+        printAllPokemons();
+        playerChoosesPokemon();
+        computerChoosesPokemon();
+        printPokemonStats();
         while (winner.equals("")) {
-            System.out.println("NEW ROUND...\n");
-            readPokemonFile();
-            printAllPokemons();
-            System.out.println("Listing all pokemons:");
-            System.out.println(pokedex.pokedexMap.toString());
-            playerChoosesPokemon();
-            computerChoosesPokemon();
-            printPokemonStats();
+            attack();
             compareCurrentHP();
         }
     }
