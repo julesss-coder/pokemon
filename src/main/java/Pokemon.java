@@ -1,11 +1,10 @@
-package org.example;
+
 
 public class Pokemon {
-
-    int pokemonId;
-    String name;
-    int hpInitial;
-    int hpCurrent;
+    private int pokemonId;
+    private String name;
+    private int hpInitial;
+    private int hpCurrent;
 
     public Pokemon(int pokemonId, String name, int hpInitial) {
         this.pokemonId = pokemonId;
@@ -14,12 +13,12 @@ public class Pokemon {
         this.hpCurrent = hpInitial;
     }
 
-    public void attack(int attackNumber) {
-
+    @Override
+    public String toString() {
+        return pokemonId + ", " + name + ", HP: " + hpInitial;
     }
 
     // Getters
-    // FIXME I'm not using the getters
     public String getName() {
         return name;
     }
@@ -30,6 +29,10 @@ public class Pokemon {
 
     public int getHpCurrent() {
         return hpCurrent;
+    }
+
+    public int getPokemonId() {
+        return pokemonId;
     }
 
     // Setter
